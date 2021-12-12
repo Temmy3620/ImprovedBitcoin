@@ -24,10 +24,10 @@ def main(my_port, p_phrase):
 
 if __name__ == '__main__':
 
-    args = sys.argv
+    args = sys.argv #コマンドライン引数を使用
  
     if len(args) == 3:
-        my_port = int(args[1])
+        my_port = int(args[1]) #python スクリプト args[1] args[2]
         p_phrase = args[2]
     else:
         print('Param Error')

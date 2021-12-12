@@ -22,10 +22,10 @@ def main(my_port, c_host, c_port, p_phrase):
 
 if __name__ == '__main__':
 
-    args = sys.argv
+    args = sys.argv #コマンドライン引数使用
  
     if len(args) == 5:
-        my_port = int(args[1])
+        my_port = int(args[1]) #python スクリプト　args[1] args[2] args[3] args[4]
         c_host = args[2]
         c_port = int(args[3])
         p_phrase = args[4]

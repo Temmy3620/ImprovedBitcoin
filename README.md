@@ -25,11 +25,11 @@ python sample_server2.py 50090 192.168.253.132 50082 test
 ### クライアント（Edgeノード）の起動
 
 ```bash:
-python wallet_app.py 50098 192.168.253.132 50082
+python wallet_masterApp.py 50098 192.168.253.132 50082
 ```
 
 ### クライアント（Edgeノード）の起動
 
 ```bash:
-python wallet_app.py 50093 192.168.253.132 50090
+python wallet_Userapp.py 50093 192.168.253.132 50090
 ```

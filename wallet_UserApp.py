@@ -68,14 +68,14 @@ class SimpleBC_Gui(Frame):
         self.c_core.start()
 
         # テスト用途（本来はこんな処理しない）
-        t1 = CoinbaseTransaction(self.km.my_address())
-        t2 = CoinbaseTransaction(self.km.my_address())
-        t3 = CoinbaseTransaction(self.km.my_address())
+        #t1 = CoinbaseTransaction(self.km.my_address())
+        #t2 = CoinbaseTransaction(self.km.my_address())
+        #t3 = CoinbaseTransaction(self.km.my_address())
 
         transactions = []
-        transactions.append(t1.to_dict())
-        transactions.append(t2.to_dict())
-        transactions.append(t3.to_dict())
+        #transactions.append(t1.to_dict())
+        #transactions.append(t2.to_dict())
+        #transactions.append(t3.to_dict())
         self.um.extract_utxos(transactions)
 
         self.update_balance()

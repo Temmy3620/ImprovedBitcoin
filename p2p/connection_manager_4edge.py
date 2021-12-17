@@ -30,18 +30,22 @@ class ConnectionManager4Edge(object):
         self.port = my_port
         self.my_core_host = my_core_host
         self.my_core_port = my_core_port
-        self.core_node_set = CoreNodeList()
-        self.mm = MessageManager()
+        self.core_node_set = CoreNodeList()#peerリストをスレッドセーフに管理する
+        self.mm = MessageManager()#プロトコルメッセージの組み立てパース
         self.callback = callback
 
     def start(self):
         """
         最初の待受を開始する際に呼び出される（ClientCore向け
+        
+        ・Serverソケットを開いて待ち受け状態に移行する
+        
+        ・PING＿INTERVALごとに生存確認メッセージ送信
         """
         t = threading.Thread(target=self.__wait_for_access)
         t.start()
 
-        self.ping_timer = threading.Timer(PING_INTERVAL, self.__send_ping)
+        self.ping_timer = threading.Timer(PING_INTERVAL, self.__send_ping)#PING_INTERVALごとに生存確認メッセージ送信
         self.ping_timer.start()
 
     def connect_to_core_node(self):
@@ -79,7 +83,7 @@ class ConnectionManager4Edge(object):
             s.connect((peer))
             s.sendall(msg.encode('utf-8'))
             s.close()
-        except:
+        except:#送信できない場合、接続し直す
             print('Connection failed for peer : ', peer)
             self.core_node_set.remove(peer)
             print('Tring to connect into P2P network...')
@@ -113,7 +117,7 @@ class ConnectionManager4Edge(object):
             port : 接続先となるCoreノードのポート番号
         """
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect((host, port))
+        s.connect((host, port))#接続する
         msg = self.mm.build(MSG_ADD_AS_EDGE, self.port)
         print(msg)
         s.sendall(msg.encode('utf-8'))

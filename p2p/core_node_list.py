@@ -7,10 +7,11 @@ class CoreNodeList:
     """
     def __init__(self):
         self.lock = threading.Lock()
-        self.list = set()
+        self.list = set() #ここに追加されるCoreノードデータが格納される
 
     def add(self, peer):
         """
+        接続してきた
         Coreノードをリストに追加する。
 
         param:
@@ -51,14 +52,14 @@ class CoreNodeList:
         """
         return self.list
 
-    def get_c_node_info(self):
+    def get_c_node_info(self): #最初に接続したcoreノードの情報を返す
         c_list = []
         for i in self.list:
            c_list.append(i)
 
         return c_list[0]
 
-    def get_length(self):
+    def get_length(self): #現在接続状態にあるCoreノードの数を返す
         return len(self.list)
 
 

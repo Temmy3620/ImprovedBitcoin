@@ -39,9 +39,14 @@ class ClientCore:
         self.callback = callback
 
     def start(self):
+        '''
+        ・ソケットを開いて待受状態にする
+
+        ・ユーザが指定した既知のCoreノードへの接続
+        '''
         self.client_state = STATE_ACTIVE
-        self.cm.start()
-        self.cm.connect_to_core_node()
+        self.cm.start()#ソケットを開いて待受状態にする
+        self.cm.connect_to_core_node()#ユーザが指定した既知のCoreノードへの接続
 
     def shutdown(self):
         self.client_state = STATE_SHUTTING_DOWN
@@ -52,17 +57,31 @@ class ClientCore:
         return self.client_state
 
     def send_message_to_my_core_node(self, msg_type, msg):
+        '''
+        coreノードに送るメッセージ(msg)を作成、送信
+        
+        msg_type : 作成したいメッセージの種別をMessageManagerの規定に従い指定
+        '''
         msg_txt = self.cm.get_message_text(msg_type, msg)
         print(msg_txt)
         self.cm.send_msg((self.my_core_host, self.my_core_port), msg_txt)
 
     def send_req_full_chain_to_my_core_node(self):
+        '''
+        プロトコルメッセージを組み立てて返却
+        指定されたnodeに対してメッセージを送信
+        '''
         print('send_req_full_chain_to_my_core_node called')
         new_message = self.cm.get_message_text(MSG_REQUEST_FULL_CHAIN)
         self.cm.send_msg((self.my_core_host, self.my_core_port), new_message)
 
 
     def __client_api(self, request, msg):
+        '''
+        引数requestによって処理を変える
+        request == 'pass_message_to_client_application'
+        mpm_store.add(msg)
+        '''
 
         if request == 'pass_message_to_client_application':
             print('Client Core API: pass_message_to_client_application')
@@ -76,6 +95,9 @@ class ClientCore:
         return self.my_protocol_message_store.get_list()
 
     def get_my_blockchain(self):
+        '''
+        ブロックチェーンにGenesisブロック以外のブロックも繋がっているときブロックチェーンを返す
+        '''
         return self.bm.get_my_blockchain()
 
     def get_stored_transactions_from_bc(self):
@@ -83,10 +105,15 @@ class ClientCore:
 
 
     def __handle_message(self, msg):
+        '''
+        受信したメッセージの処理をする
+        msg[2]:msg_type
+        msg[4]:payload[ブロックやらブロックチェーンlistやらtransactionやら]
+        '''
         if msg[2] == RSP_FULL_CHAIN:
             # ブロックチェーン送信要求に応じて返却されたブロックチェーンを検証し、有効なものか検証した上で
             # 自分の持つチェインと比較し優位な方を今後のブロックチェーンとして利用する
-            new_block_chain = pickle.loads(msg[4].encode('utf8'))
+            new_block_chain = pickle.loads(msg[4].encode('utf8'))#保存
             result, _ = self.bm.resolve_conflicts(new_block_chain)
             print('blockchain received form central', result)
             if result is not None:
@@ -102,6 +129,9 @@ class ClientCore:
             self.mpmh.handle_message(msg[4], self.__client_api, True)
 
     def __get_myip(self):
+        '''
+        ローカルIPアドレスを取得して返す
+        '''
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(('8.8.8.8', 80))
         return s.getsockname()[0]

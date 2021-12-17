@@ -9,16 +9,16 @@ def signal_handler(signal, frame):
     shutdown_server()
 
 def shutdown_server():
-    global my_p2p_server
+    global my_p2p_server#関数の外の変数を使う
     my_p2p_server.shutdown()
 
 
 def main(my_port, c_host, c_port, p_phrase):
-    signal.signal(signal.SIGINT, signal_handler)
-    global my_p2p_server
-    my_p2p_server = ServerCore(my_port, c_host, c_port, p_phrase)
-    my_p2p_server.start()
-    my_p2p_server.join_network() 
+    signal.signal(signal.SIGINT, signal_handler)#割り込みシグナルで、キーボードから「CTRL+C」で中断させる
+    global my_p2p_server#関数の外の変数を使う
+    my_p2p_server = ServerCore(my_port, c_host, c_port, p_phrase)#クラスからインスタンス作成
+    my_p2p_server.start()#
+    my_p2p_server.join_network()#
 
 if __name__ == '__main__':
 

@@ -29,7 +29,7 @@ from .message_manager import (
 )
 
 # 動作確認用の値。本来は30分(1800)くらいがいいのでは
-PING_INTERVAL = 10
+PING_INTERVAL = 10   #何秒後にノードの生存確認する関数を実行するか決める
 
 
 class ConnectionManager:
@@ -51,22 +51,26 @@ class ConnectionManager:
         self.port = my_port
         self.my_c_host = None
         self.my_c_port = None
-        self.core_node_set = CoreNodeList()
-        self.edge_node_set = EdgeNodeList()
-        self.__add_peer((host, my_port))
-        self.mm = MessageManager()
-        self.callback = callback
+        self.core_node_set = CoreNodeList()#Coreノード管理
+        self.edge_node_set = EdgeNodeList()#Edgeノード管理
+        self.__add_peer((host, my_port))#Coreノードをリストに追加する
+        self.mm = MessageManager()#プロトコルメッセージの組み立てパース
+        self.callback = callback#conactionmanagerが呼び出されるたびに機能する？？？？
 
     def start(self):
         """
         最初の待受を開始する際に呼び出される（ServerCore向け
+
+        PING_INTERVALごとに接続しているcore/Edgeノードの生存確認を実行
         """
         t = threading.Thread(target=self.__wait_for_access)
         t.start()
 
+        #PING_INTERVALごとに__check_peers_connectionを実行
         self.ping_timer_p = threading.Timer(PING_INTERVAL, self.__check_peers_connection)
         self.ping_timer_p.start()
-
+        
+        #PING_INTERVALごとに__check_edges_connectionを実行
         self.ping_timer_e = threading.Timer(PING_INTERVAL, self.__check_edges_connection)
         self.ping_timer_e.start()
 
@@ -161,6 +165,9 @@ class ConnectionManager:
 
 
     def has_this_edge(self, pubky_address):
+        '''
+        指定の公開鍵を持ったEdgeノードがリストに存在しているかどうかを確認し結果を返却する
+        '''
         return self.edge_node_set.has_this_edge(pubky_address)
 
     
@@ -173,10 +180,10 @@ class ConnectionManager:
             port : 接続先となるCoreノードのポート番号
         """
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect((host, port))
+        s.connect((host, port))#接続要求
         m_type = MSG_ADD
         msg = self.mm.build(m_type, self.port)
-        s.sendall(msg.encode('utf-8'))
+        s.sendall(msg.encode('utf-8'))#utf-8でエンコードしたmsgを送る
         s.close()
     
     
@@ -186,7 +193,7 @@ class ConnectionManager:
         Serverソケットを開いて待ち受け状態に移行する
         """
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.bind((self.host, self.port))
+        self.socket.bind((self.host, self.port))#ホスト名とポート番号を指定
         self.socket.listen(0)
 
         executor = ThreadPoolExecutor(max_workers=10)
@@ -194,7 +201,7 @@ class ConnectionManager:
         while True:
 
             print('Waiting for the connection ...')
-            soc, addr = self.socket.accept()
+            soc, addr = self.socket.accept()#接続受信を行う
             print('Connected by .. ', addr)
             data_sum = ''
 

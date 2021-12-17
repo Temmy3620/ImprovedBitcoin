@@ -37,6 +37,7 @@ class MessageManager:
             msg_type : 規定のメッセージ種別
             my_port : メッセージ送信者が受信用に待機させているServerSocketが使うポート番号
             payload : メッセージに組み込みたいデータがある場合に指定する
+            （msg_type:MSG_REQUEST_FULL_CHAIN以外がどれもpayloadが付きで送信されてくる）
 
         return:
             message : JSON形式に変換されたプロトコルメッセージ
@@ -49,10 +50,10 @@ class MessageManager:
           'my_port': my_port
         }
 
-        if payload is not None:
-            message['payload'] = payload
+        if payload is not None:#pyloadが空ではない時
+            message['payload'] = payload#データと共にpayloadという項目を追加
 
-        return json.dumps(message)
+        return json.dumps(message)#messageをjson形式に変換する
 
     def parse(self, msg):
         """

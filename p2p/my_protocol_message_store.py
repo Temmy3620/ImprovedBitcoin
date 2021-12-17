@@ -11,7 +11,7 @@ class MessageStore:
 
     def add(self, msg):
         """
-        メッセージをリストに追加する。
+        拡張メッセージをリストに追加する。
 
         param:
             msg : 拡張メッセージとして届けられたもの
@@ -42,6 +42,7 @@ class MessageStore:
     def overwrite(self, new_list):
         """
         一括での上書き処理をしたいような場合はこちら
+        引数new_listでlist上書き
         """
         with self.lock:
             self.list = new_list
@@ -49,20 +50,26 @@ class MessageStore:
 
     def get_list(self):
         """
-        現在保存されているメッセージの一覧を返却する
+        現在保存されているメッセージの一覧(list)を返却する
         """
         if len(self.list) > 0:
             return self.list
         else:
-        	return None
+            return None
 
     def get_length(self):
-    	return len(self.list)
+        '''
+        現在のメッセージ数(listの長さ)を返す
+        '''
+        return len(self.list)
 
 
     def has_this_msg(self, msg):
+        '''
+        引数msgがlist内にあるか検証
+        '''
         for m in self.list:
             if m == msg:
                 return True
 
-        return False,
+        return False

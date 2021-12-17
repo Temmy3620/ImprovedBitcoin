@@ -9,6 +9,7 @@ PASS_TO_CLIENT_APP = 'pass_message_to_client_application'
 class MyProtocolMessageHandler:
     """
     独自に拡張したENHANCEDメッセージの処理や生成を担当する
+    こいつが勝手に一人で動いているだけ！何も返さない
     """
 
     def __init__(self):
@@ -26,13 +27,13 @@ class MyProtocolMessageHandler:
 
             is_core : 送信元ノードがCoreノードであるかどうか
         """
-        msg = json.loads(msg)
-        my_api = api('api_type', None)
+        msg = json.loads(msg)#json文字列を辞書に変換
+        my_api = api('api_type', None)#apiのタイプを格納
         print('my_api: ', my_api)
-        if my_api == 'server_core_api':
+        if my_api == 'server_core_api':#api_typeがサーバーコアの特
             if msg['message_type'] == 'cipher_message':
                 print('received cipher message!')
-                target_address = msg['recipient']
+                target_address = msg['recipient']#
                 result = api(SEND_TO_THIS_ADDRESS, (target_address, json.dumps(msg)))
                 if result == None:
                     if is_core is not True:

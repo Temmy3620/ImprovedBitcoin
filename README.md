@@ -1,8 +1,6 @@
-## このサンプルコードが対象としているセクション　
+## SampleCode改良した
 
-2.4.3 Edgeノードを作る  
-〜  
-2.4.4 CoreノードとEdgeノードを接続してみる 
+samplebitcoin改良版
 
 
 ### Tested System:
